@@ -59,15 +59,15 @@ a {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="user in users">
-                                    <td class="text-center">{{user.user}}</td>
-                                    <td class="text-center">{{user.email}}</td>
-                                    <td class="text-center">{{user.email}}</td>
+                                <tr v-for="book in books">
+                                    <td class="text-center">{{book.titulo}}</td>
+                                    <td class="text-center">{{book.Editorial}}</td>
+                                    <td class="text-center">{{book.area}}</td>
                                     <td style="text-align: center;">
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-dark" title="Editar"  @click="showEditModal=true; selectUser(user);  clearMsg();"><i class="fa fa-pen"></i></i></ button>
+                                            <button class="btn btn-dark" title="Editar"  @click=""><i class="fa fa-pen"></i></i></ button>
                                             &nbsp;
-                                            <button class="btn btn-danger" title="Deactivate" @click="showActivateModal=true; selectUser(user);  clearMsg();"><i
+                                            <button class="btn btn-danger" title="Deactivate" @click=""><i
                                                     class="fa fa-trash"></i></button>    
                                         </div>
                                     </td>
@@ -87,5 +87,6 @@ a {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src='https://kit.fontawesome.com/a076d05399.js'></script>
- 
+
+<script src="./script/book.js"></script>
 </html>
