@@ -51,6 +51,45 @@ var app = new Vue({
                     app.getAllBooks();
                 }
             });
+        },
+        deleteBook() {
+            var formData = app.toFormData(app.correntBook);
+            axios.post(url.concat("delete"), formData).then(function (response) {
+
+                app.correntBook = {};
+
+                if (response.data.error) {
+                    //app.errorMsg = response.data.message;
+                } else {
+                    //app.successMsg = response.data.message;
+                    app.getAllBooks();
+                }
+            });
+        },
+        selectBook(book) {
+            app.correntBook = book;
+        },
+        alertaDelete() {
+            Swal.fire({
+                title: '¿Está seguro de borrar el registro: ' + app.correntBook.titulo + "?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Borrar',
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.value) {
+                    app.deleteBook()
+                    app.getAllBooks();
+                    //y mostramos un msj sobre la eliminación  
+                    Swal.fire(
+                        '¡Eliminado!',
+                        'El registro ha sido borrado.',
+                        'success'
+                    )
+                }
+            })
         }
     }
 });
