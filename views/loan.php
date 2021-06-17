@@ -61,21 +61,22 @@ a {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="user in users">
-                                    <td class="text-center">{{user.user}}</td>
-                                    <td class="text-center">{{user.email}}</td>
-                                    <td class="text-center">{{user.email}}</td>
-                                    <td class="text-center">{{user.email}}</td>
-                                    <td v-if="user.state == 1" class="text-center"><span class="badge badge-info">Active</span></td>
+                                <tr v-for="loan in loans">
+                                    <td class="text-center">{{loan.estudiante}}</td>
+                                    <td class="text-center">{{loan.titulo}}</td>
+                                    <td class="text-center">{{loan.fecha_prestamo.date}}</td>
+                                    <td class="text-center">{{loan.fecha_dev.date}}</td>
+                                    <td v-if="loan.devuelto == 1" class="text-center"><span class="badge badge-info">Active</span></td>
+                                    <td v-else class="text-center"><span class="badge badge-info">Desactivado</span></td>
                                     <td style="text-align: center;">
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-dark" title="Editar"  @click="showEditModal=true; selectUser(user);  clearMsg();"><i class="fa fa-pen"></i></i></ button>
+                                            <button class="btn btn-dark" title="Editar"  @click=""><i class="fa fa-pen"></i></i></ button>
                                             &nbsp;
-                                             <button v-if="user.state == 0" class="btn btn-info" title="Activate" @click="showinactivateModal=true; selectUser(user);  clearMsg();"><i
+                                             <button v-if="" class="btn btn-info" title="Activate" @click=""><i
                                                     class="fa fa-check"></i></button>
 
-                                            <button v-else class="btn btn-danger" title="Deactivate" @click="showActivateModal=true; selectUser(user);  clearMsg();"><i
-                                                    class="fa fa-times"></i></button>   
+                                            <!--<button v-else class="btn btn-danger" title="Deactivate" @click=""><i
+                                                    class="fa fa-times"></i></button>   -->
                                         </div>
                                     </td>
                                 </tr>
@@ -94,5 +95,7 @@ a {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+
+<script src="./script/loan.js"></script>
  
 </html>
