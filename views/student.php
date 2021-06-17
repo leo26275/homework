@@ -60,16 +60,16 @@ a {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="user in users">
-                                    <td class="text-center">{{user.user}}</td>
-                                    <td class="text-center">{{user.email}}</td>
-                                    <td class="text-center">{{user.email}}</td>
-                                    <td class="text-center">{{user.email}}</td>
+                                <tr v-for="student in students">
+                                    <td class="text-center">{{student.nombre}}</td>
+                                    <td class="text-center">{{student.direccion}}</td>
+                                    <td class="text-center">{{student.carrera}}</td>
+                                    <td class="text-center">{{student.fechanac.date}}</td>
                                     <td style="text-align: center;">
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-dark" title="Editar"  @click="showEditModal=true; selectUser(user);  clearMsg();"><i class="fa fa-pen"></i></i></ button>
+                                            <button class="btn btn-dark" title="Editar"  @click=""><i class="fa fa-pen"></i></i></ button>
                                             &nbsp;
-                                            <button class="btn btn-danger" title="Deactivate" @click="showActivateModal=true; selectUser(user);  clearMsg();"><i
+                                            <button class="btn btn-danger" title="Deactivate" @click=""><i
                                                     class="fa fa-trash"></i></button>    
                                         </div>
                                     </td>
@@ -89,5 +89,50 @@ a {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src='https://kit.fontawesome.com/a076d05399.js'></script>
- 
+
+<script>
+
+    var url = "../models/StudentModel.php?action=";
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            errorMsg: "",
+            successMsg: "",
+            students: [],
+            showAddModal: false,
+            showEditModal: false,
+            showinactivateModal: false,
+            showActivateModal: false,
+            showInsertModal: true,
+            newStudent: {nombre: "", direccion: "", carrera: "", fechanac: ""},
+            correntStudent: {}
+        },
+        mounted: function() {
+            this.getAllStudents();
+        },
+        methods: {
+            getAllStudents() {
+                axios.get(url.concat("read")).then(function(response) {
+                    if (response.data.error) {
+                        app.errorMsg = response.data.message;
+                    } else {
+                        app.students = response.data.students;
+                    }
+                });
+            },
+            toFormData(obj){
+                var fd = new FormData();
+                for (var i in obj){
+                    fd.append(i,obj[i]);
+                }
+                return fd;
+            },
+            clearMsg(){
+                app.errorMsg = "";
+                app.successMsg = "";
+            }
+        }
+    });
+</script>
 </html>
