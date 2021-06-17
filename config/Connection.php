@@ -1,7 +1,7 @@
 <?php 
 
 	$serverName = "MSI";
-	$connectionInfo = array("Database" =>"libro");
+	$connectionInfo = array("Database" =>"libros");
 	$conn = sqlsrv_connect($serverName, $connectionInfo);
 
 	if($conn){

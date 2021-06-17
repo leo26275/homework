@@ -9,7 +9,7 @@
    }
 
    if($action == 'read'){
-       $sql = "SELECT * FROM libro";
+       $sql = "SELECT * FROM libros";
        $books = array();
        $stmt = sqlsrv_query( $conn, $sql );
        if( $stmt === false) {
@@ -23,7 +23,24 @@
        $resul['books']=$books;
        sqlsrv_free_stmt( $stmt);
        
-   }	
+   }
+
+   if($action == 'create'){
+    $titulo = $_POST['titulo'];
+    $editorial = $_POST['editorial'];
+    $area = $_POST['area'];
+
+    $sql ="INSERT INTO libros (titulo, editorial, area) VALUES ('$titulo', '$editorial', '$area')";
+    
+    $stmt = sqlsrv_query( $conn, $sql );
+
+    if($stmt){
+        $resul['message'] = "Libro added successfully!";
+    }else{
+        $resul['error'] = true;
+        $resul['message'] = "The values are wrong!";
+    }
+}
 
    sqlsrv_close( $conn );
    echo json_encode($resul);

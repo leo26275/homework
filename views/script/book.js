@@ -11,7 +11,7 @@ var app = new Vue({
         showinactivateModal: false,
         showActivateModal: false,
         showInsertModal: true,
-        newBook: {titulo: "", Editorial: "", area: ""},
+        newBook: {titulo: "", editorial: "", area: ""},
         correntBook: {}
     },
     mounted: function() {
@@ -37,6 +37,20 @@ var app = new Vue({
         clearMsg(){
             app.errorMsg = "";
             app.successMsg = "";
+        },
+        addBook(){
+            var formData = app.toFormData(app.newBook);
+            axios.post(url.concat("create"), formData).then(function(response){
+                
+                app.newBook = {titulo: "", editorial: "", area: ""};
+
+                if(response.data.error){
+                    app.errorMsg = response.data.message;
+                }else{
+                    app.successMsg = response.data.message;
+                    app.getAllBooks();
+                }
+            });
         }
     }
 });

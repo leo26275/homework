@@ -61,7 +61,7 @@ a {
                             <tbody>
                                 <tr v-for="book in books">
                                     <td class="text-center">{{book.titulo}}</td>
-                                    <td class="text-center">{{book.Editorial}}</td>
+                                    <td class="text-center">{{book.editorial}}</td>
                                     <td class="text-center">{{book.area}}</td>
                                     <td style="text-align: center;">
                                         <div class="btn-group" role="group">
@@ -78,9 +78,47 @@ a {
                     </div>
                     <?php include('footer.php'); ?>
                 </div>
+
+                <div id="overlay" v-if="showAddModal"> 
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Agregar Nuevo Libro</h5>
+                            <button type="button" class="close" @click="showAddModal=false">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <form action="#" method="post">
+                                <div class="form-group">
+                                  <!--<small style="color: red">Book must be unique</small>-->
+                                  <input type="text" name="titulo" class="form-control form-control-lg" placeholder="Title of the book" aria-describedby="helpId" v-model="newBook.titulo"> 
+                                  <!--<small style="color: red" v-if="userRequired">Required field</small>-->
+                                </div>
+                                <div class="form-group">
+                                  <input type="text" name="editorial" class="form-control form-control-lg" placeholder="Editorial" aria-describedby="helpId" v-model="newBook.editorial">
+                                  <!--<small style="color: red"  v-if="passwordRequired">Required field</small>-->
+                                </div>
+                                <div class="form-group">
+                                  <!--<small style="color: red">Email must be unique</small>-->
+                                  <input type="text" name="area" class="form-control form-control-lg" placeholder="Area" aria-describedby="helpId" v-model="newBook.area">
+                                  <!--<small style="color: red"  v-if="emailRequired">Required field</small>
+                                  <small style="color: red"  v-if="invaleImail">Enter a valid email</small>-->
+                                </div>   
+                            </form>
+                             <div class="form-group">
+                                  <button class="btn btn-info btn-block btn-lg" @click="addBook();">Agregar Libro</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-        </div>
+            </div>
+            
+
+        </div>    
+
 </body> 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
