@@ -72,11 +72,11 @@ a {
                                         <div class="btn-group" role="group">
                                             <button class="btn btn-dark" title="Editar"  @click=""><i class="fa fa-pen"></i></i></ button>
                                             &nbsp;
-                                             <button v-if="" class="btn btn-info" title="Activate" @click=""><i
+                                             <button v-if="loan.devuelto==1" class="btn btn-info" title="Activate" @click="selectLoan(loan), alertaDesabilitar()"><i
                                                     class="fa fa-check"></i></button>
 
-                                            <!--<button v-else class="btn btn-danger" title="Deactivate" @click=""><i
-                                                    class="fa fa-times"></i></button>   -->
+                                            <button v-else class="btn btn-danger" title="Deactivate" @click="selectLoan(loan), alertaActivar()"><i
+                                                    class="fa fa-times"></i></button>   
                                         </div>
                                     </td>
                                 </tr>
@@ -146,7 +146,7 @@ a {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src='https://kit.fontawesome.com/a076d05399.js'></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="./script/loan.js"></script>
  
 </html>

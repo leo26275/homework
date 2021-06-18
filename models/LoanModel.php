@@ -9,9 +9,9 @@
    }
 
    if($action == 'read'){
-       $sql = "SELECT x.estudiante, x.titulo, x.fecha_prestamo, x.fecha_dev, x.devuelto
+       $sql = "SELECT x.estudiante, x.titulo, x.fecha_prestamo, x.fecha_dev, x.devuelto, x.idprestamo
        FROM(
-       SELECT es.nombre AS estudiante, li.titulo AS titulo, p.fecha_prestamo, p.fecha_dev, p.devuelto
+       SELECT es.nombre AS estudiante, li.titulo AS titulo, p.fecha_prestamo, p.fecha_dev, p.devuelto, p.idprestamo
        FROM prestamo p, (SELECT e.idestudiante, e.nombre FROM estudiante e)es,
        (SELECT l.idlibro, l.titulo FROM libros l)li
        WHERE p.idestudiante = es.idestudiante AND p.idlibro = li.idlibro)x";
@@ -31,23 +31,51 @@
    }	
 
    if($action == 'create'){
-    $idestudiante = $_POST['idestudiante'];
-    $idlibro = $_POST['idlibro'];
-    $fecha_prestamo = $_POST['fecha_prestamo'];
-    $fecha_dev = $_POST['fecha_dev'];
+        $idestudiante = $_POST['idestudiante'];
+        $idlibro = $_POST['idlibro'];
+        $fecha_prestamo = $_POST['fecha_prestamo'];
+        $fecha_dev = $_POST['fecha_dev'];
 
-    $sql ="INSERT INTO prestamo (idestudiante, idlibro, fecha_prestamo, fecha_dev, devuelto) VALUES ('$idestudiante', '$idlibro', '$fecha_prestamo', '$fecha_dev', 
-    1)";
-    
-    $stmt = sqlsrv_query( $conn, $sql );
+        $sql ="INSERT INTO prestamo (idestudiante, idlibro, fecha_prestamo, fecha_dev, devuelto) VALUES ('$idestudiante', '$idlibro', '$fecha_prestamo', '$fecha_dev', 
+        1)";
+        
+        $stmt = sqlsrv_query( $conn, $sql );
 
-    if($stmt){
-        $resul['message'] = "Prestamo added successfully!";
-    }else{
-        $resul['error'] = true;
-        $resul['message'] = "The values are wrong!";
+        if($stmt){
+            $resul['message'] = "Prestamo added successfully!";
+        }else{
+            $resul['error'] = true;
+            $resul['message'] = "The values are wrong!";
+        }
     }
-}
+
+    if($action == 'activar'){
+        $idprestamo = $_POST['idprestamo'];
+        $sql = "UPDATE prestamo SET devuelto = 1 WHERE idprestamo ='$idprestamo'";
+        $stmt = sqlsrv_query( $conn, $sql );
+
+        if($stmt){
+            $resul['message'] = "Se ha activado";
+        }else{
+            $resul['error'] = true;
+            $resul['message'] = "No se pudo habilitar";
+        }
+    }
+
+    if($action == 'desactivar'){
+        $idprestamo = $_POST['idprestamo'];
+        $sql = "UPDATE prestamo SET devuelto = 0 WHERE idprestamo ='$idprestamo'";
+        $stmt = sqlsrv_query( $conn, $sql );
+
+        if($stmt){
+            $resul['message'] = "Se ha deshabilitado";
+        }else{
+            $resul['error'] = true;
+            $resul['message'] = "El prestamo no se pudo deshabilitar";
+        }
+    }
+
+
 
    sqlsrv_close( $conn );
    echo json_encode($resul);

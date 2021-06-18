@@ -4,6 +4,10 @@
 	$connectionInfo = array("Database" =>"libros");
 	$conn = sqlsrv_connect($serverName, $connectionInfo);
 
+	/*$serverName = "bdatos.com"; //serverName\instanceName
+	$connectionInfo = array( "Database"=>"libros", "UID"=>"sa", "PWD"=>"GE17009*");
+	$conn = sqlsrv_connect( $serverName, $connectionInfo);*/
+
 	if($conn){
 		//echo "Conexion establecida";
 	}else{
