@@ -80,6 +80,48 @@ a {
                     </div>
                     <?php include('footer.php'); ?>
                 </div>
+
+                <div id="overlay" v-if="showAddModal"> 
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Agregar Nuevo Estudiante</h5>
+                            <button type="button" class="close" @click="showAddModal=false">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <form action="#" method="post">
+                                <div class="form-group">
+                                  <!--<small style="color: red">Book must be unique</small>-->
+                                  <input type="text" name="nombre" class="form-control form-control-lg" placeholder="Nombre del estudiante" aria-describedby="helpId" v-model="newStudent.nombre"> 
+                                  <!--<small style="color: red" v-if="userRequired">Required field</small>-->
+                                </div>
+                                <div class="form-group">
+                                  <input type="text" name="direccion" class="form-control form-control-lg" placeholder="Dirección" aria-describedby="helpId" v-model="newStudent.direccion">
+                                  <!--<small style="color: red"  v-if="passwordRequired">Required field</small>-->
+                                </div>
+                                <div class="form-group">
+                                  <!--<small style="color: red">Email must be unique</small>-->
+                                  <input type="text" name="carrera" class="form-control form-control-lg" placeholder="Carrera" aria-describedby="helpId" v-model="newStudent.carrera">
+                                  <!--<small style="color: red"  v-if="emailRequired">Required field</small>
+                                  <small style="color: red"  v-if="invaleImail">Enter a valid email</small>-->
+                                </div>  
+                                <div class="form-group">
+                                  <!--<small style="color: red">Email must be unique</small>-->
+                                  <input type="date" name="fechanac" class="form-control form-control-lg" placeholder="Fecha de nacimiento" aria-describedby="helpId" v-model="newStudent.fechanac">
+                                  <!--<small style="color: red"  v-if="emailRequired">Required field</small>
+                                  <small style="color: red"  v-if="invaleImail">Enter a valid email</small>-->
+                                </div>    
+                            </form>
+                             <div class="form-group">
+                                  <button class="btn btn-info btn-block btn-lg" @click="addStudent();">Agregar Estudiante</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             </div>
 
         </div>

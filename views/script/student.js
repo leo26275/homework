@@ -37,6 +37,21 @@ var app = new Vue({
         clearMsg(){
             app.errorMsg = "";
             app.successMsg = "";
+        },
+        addStudent(){
+            var formData = app.toFormData(app.newStudent);
+            axios.post(url.concat("create"), formData).then(function(response){
+                
+                app.newStudent = {nombre: "", direccion: "", carrera: "", fechanac: ""};
+
+                if(response.data.error){
+                    app.errorMsg = response.data.message;
+                }else{
+                    app.successMsg = response.data.message;
+                    app.getAllStudents();
+                    app.showAddModal = false;
+                }
+            });
         }
     }
 });
