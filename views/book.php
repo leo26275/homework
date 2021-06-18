@@ -65,7 +65,7 @@ a {
                                     <td class="text-center">{{book.area}}</td>
                                     <td style="text-align: center;">
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-dark" title="Editar"  @click=""><i class="fa fa-pen"></i></i></ button>
+                                            <button class="btn btn-dark" title="Editar"  @click="showEditModal=true; selectBook(book);  clearMsg();"><i class="fa fa-pen"></i></i></ button>
                                             &nbsp;
                                             <button v-if="book.estado==1" disabled="true" class="btn btn-danger" title="Eliminar"><i
                                                     class="fa fa-trash"></i></button> 
@@ -115,6 +115,39 @@ a {
                     </div>
                 </div>
             </div>
+
+        <!-- Edit  Book Model-->
+        <div id="overlay" v-if="showEditModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar libro</h5>
+                        <button type="button" class="close" @click="showEditModal=false">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form action="#" method="post">
+                            <div class="form-group">
+                              <input type="text" name="titulo" class="form-control form-control-lg" placeholder="Titulo de libro" 
+                              aria-describedby="helpId" v-model="correntBook.titulo">
+                            </div>
+                            <div class="form-group">
+                              <input type="text" name="editorial" class="form-control form-control-lg" placeholder="Editorial" 
+                              aria-describedby="helpId" v-model="correntBook.editorial">
+                            </div>
+                            <div class="form-group">
+                              <input type="text" name="area" class="form-control form-control-lg" placeholder="Area" 
+                              aria-describedby="helpId" v-model="correntBook.area">
+                            </div>
+                        </form>
+                        <div class="form-group">
+                              <button class="btn btn-info btn-block btn-lg" @click="showEditModal=false; updateBook();">Editar libro</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
             </div>
             

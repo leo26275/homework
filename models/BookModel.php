@@ -55,13 +55,30 @@ if($action == 'delete'){
     $idlibro = $_POST['idlibro'];
 
     $sql ="DELETE FROM libros WHERE idlibro = '$idlibro'";
-    $stmt = sqlsrv_query( $conn, $sql );
+    $stmt = sqlsrv_query( $conn, $sql);
 
-    if($sql){
+    if($stmt){
         $resul['message'] = "The book was deleted successfully!";
     }else{
         $resul['error'] = true;
         $resul['message'] = "Could not delete the book";
+    }
+}
+
+if($action == 'update'){
+    $idlibro = $_POST['idlibro'];
+    $titulo = $_POST['titulo'];
+    $editorial = $_POST['editorial'];
+    $area = $_POST['area'];
+
+    $sql = "UPDATE libros SET titulo = '$titulo', editorial = '$editorial', area = '$area' WHERE idlibro = '$idlibro'";
+    $stmt = sqlsrv_query( $conn, $sql);
+    
+    if($stmt){
+        $resul['message'] = "Book updated successfully!";
+    }else{
+        $resul['error'] = true;
+        $resul['message'] = "Failed to update book!";
     }
 }
 

@@ -13,7 +13,7 @@
        FROM(
        SELECT es.nombre AS estudiante, li.titulo AS titulo, p.fecha_prestamo, p.fecha_dev, p.devuelto
        FROM prestamo p, (SELECT e.idestudiante, e.nombre FROM estudiante e)es,
-       (SELECT l.idlibro, l.titulo FROM libro l)li
+       (SELECT l.idlibro, l.titulo FROM libros l)li
        WHERE p.idestudiante = es.idestudiante AND p.idlibro = li.idlibro)x";
        $loans = array();
        $stmt = sqlsrv_query( $conn, $sql );

@@ -24,6 +24,7 @@ var app = new Vue({
                     app.errorMsg = response.data.message;
                 } else {
                     app.books = response.data.books;
+                    app.showAddModal = false;
                 }
             });
         },
@@ -49,6 +50,7 @@ var app = new Vue({
                 }else{
                     app.successMsg = response.data.message;
                     app.getAllBooks();
+                    
                 }
             });
         },
@@ -62,8 +64,9 @@ var app = new Vue({
                     //app.errorMsg = response.data.message;
                 } else {
                     //app.successMsg = response.data.message;
-                    app.getAllBooks();
+                   
                 }
+                app.getAllBooks();
             });
         },
         selectBook(book) {
@@ -81,15 +84,34 @@ var app = new Vue({
             }).then((result) => {
                 if (result.value) {
                     app.deleteBook()
-                    app.getAllBooks();
+                    
                     //y mostramos un msj sobre la eliminación  
                     Swal.fire(
                         '¡Eliminado!',
                         'El registro ha sido borrado.',
                         'success'
                     )
+                    app.getAllBooks();
                 }
             })
+        },
+        updateBook(){
+            var formData = app.toFormData(app.correntBook);
+            axios.post(url.concat("update"), formData).then(function(response){
+                
+                app.correntBook = {};
+
+                if(response.data.error){
+                    app.errorMsg = response.data.message;
+                }else{
+                    app.successMsg = response.data.message;
+                    app.getAllBooks();
+                }
+            });
+        },
+        clearMsg(){
+            app.errorMsg = "";
+            app.successMsg = "";
         }
     }
 });
