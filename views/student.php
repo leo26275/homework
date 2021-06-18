@@ -69,8 +69,10 @@ a {
                                         <div class="btn-group" role="group">
                                             <button class="btn btn-dark" title="Editar"  @click=""><i class="fa fa-pen"></i></i></ button>
                                             &nbsp;
-                                            <button class="btn btn-danger" title="Deactivate" @click=""><i
-                                                    class="fa fa-trash"></i></button>    
+                                            <button v-if="student.estado==1" disabled="true" class="btn btn-danger" title="Eliminar"><i
+                                                    class="fa fa-trash"></i></button> 
+                                            <button v-if="student.estado==0" class="btn btn-danger" title="Eliminar" @click="selectStuden(student), alertaDelete();"><i
+                                                    class="fa fa-trash"></i></button>     
                                         </div>
                                     </td>
                                 </tr>
@@ -132,6 +134,7 @@ a {
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="./script/student.js">
 </script>
 </html>

@@ -52,6 +52,48 @@ var app = new Vue({
                     app.showAddModal = false;
                 }
             });
+        },
+        deleteStudent() {
+            var formData = app.toFormData(app.correntStudent);
+            axios.post(url.concat("delete"), formData).then(function (response) {
+
+                app.correntStudent = {};
+
+                if (response.data.error) {
+                    //app.errorMsg = response.data.message;
+                } else {
+                    //app.successMsg = response.data.message;
+                   
+                }
+                app.getAllStudents();
+            });
+        },
+        selectStuden(student) {
+            app.correntStudent = student;
+        },
+        alertaDelete() {
+            Swal.fire({
+                title: '¿Está seguro de borrar el registro: ' + app.correntStudent.nombre + "?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Borrar',
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.value) {
+                    app.deleteStudent()
+                    
+                    //y mostramos un msj sobre la eliminación  
+                    Swal.fire(
+                        '¡Eliminado!',
+                        'El registro ha sido borrado.',
+                        'success'
+                    )
+                    app.getAllStudents();
+                }
+            })
         }
+        
     }
 });

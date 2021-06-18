@@ -51,6 +51,20 @@
         }
     }
 
+    if($action == 'delete'){
+        $idestudiante = $_POST['idestudiante'];
+    
+        $sql ="DELETE FROM estudiante WHERE idestudiante = '$idestudiante'";
+        $stmt = sqlsrv_query( $conn, $sql);
+    
+        if($stmt){
+            $resul['message'] = "The student was deleted successfully!";
+        }else{
+            $resul['error'] = true;
+            $resul['message'] = "Could not delete the student";
+        }
+    }
+
     sqlsrv_close( $conn );
     echo json_encode($resul);
 ?>
