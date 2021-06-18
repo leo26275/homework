@@ -86,8 +86,59 @@ a {
                     </div>
                     <?php include('footer.php'); ?>
                 </div>
+
+                <div id="overlay" v-if="showAddModal"> 
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Realizar Nuevo Prestamo</h5>
+                            <button type="button" class="close" @click="showAddModal=false">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <form action="#" method="post">
+                                <div class="form-group">
+                                  <!--<small style="color: red">Book must be unique</small>-->
+                                  <select v-model="newLoan.idestudiante" class="form-control select-picker" name="idestudiante" id="idestudiante" required>
+                                                    <option disabled="true">-- Seleccione un estudiante --</option>
+                                                    <option v-for="student in students" :value="student.idestudiante">
+                                                        {{student.nombre}}
+                                                    </option>
+                                                </select>
+                                  <!--<small style="color: red" v-if="userRequired">Required field</small>-->
+                                </div>
+                                <div class="form-group">
+                                <select v-model="newLoan.idlibro" class="form-control select-picker" name="idlibro" id="idlibro" required>
+                                                    <option disabled="true">-- Seleccione un libro --</option>
+                                                    <option v-for="book in books" :value="book.idlibro">
+                                                        {{book.titulo}}
+                                                    </option>
+                                                </select>
+                                  <!--<small style="color: red"  v-if="passwordRequired">Required field</small>-->
+                                </div>
+                                <div class="form-group">
+                                  <!--<small style="color: red">Email must be unique</small>-->
+                                  <input type="date" name="feha_prestamo" class="form-control form-control-lg" placeholder="Fecha de prestamo" aria-describedby="helpId" v-model="newLoan.fecha_prestamo">
+                                  <!--<small style="color: red"  v-if="emailRequired">Required field</small>
+                                  <small style="color: red"  v-if="invaleImail">Enter a valid email</small>-->
+                                </div>   
+                                <div class="form-group">
+                                  <!--<small style="color: red">Email must be unique</small>-->
+                                  <input type="date" name="feha_dev" class="form-control form-control-lg" placeholder="Fecha de devolucion" aria-describedby="helpId" v-model="newLoan.feha_dev">
+                                  <!--<small style="color: red"  v-if="emailRequired">Required field</small>
+                                  <small style="color: red"  v-if="invaleImail">Enter a valid email</small>-->
+                                </div>   
+                            </form>
+                             <div class="form-group">
+                                  <button class="btn btn-info btn-block btn-lg" @click="addLoan();">Agregar prestamo</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
+            </div>
         </div>
 </body> 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>

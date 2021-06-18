@@ -65,6 +65,24 @@
         }
     }
 
+    if($action == 'update'){
+        $idestudiante = $_POST['idestudiante'];
+        $nombre = $_POST['nombre'];
+        $direccion = $_POST['direccion'];
+        $carrera = $_POST['carrera'];
+        $fechanac = $_POST['fechanac'];
+    
+        $sql = "UPDATE estudiante SET nombre = '$nombre', direccion = '$direccion', carrera = '$carrera', fechanac = '$fechanac' WHERE idestudiante = '$idestudiante'";
+        $stmt = sqlsrv_query( $conn, $sql);
+        
+        if($stmt){
+            $resul['message'] = "Student updated successfully!";
+        }else{
+            $resul['error'] = true;
+            $resul['message'] = "Failed to update student!";
+        }
+    }
+
     sqlsrv_close( $conn );
     echo json_encode($resul);
 ?>

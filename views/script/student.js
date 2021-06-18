@@ -93,7 +93,24 @@ var app = new Vue({
                     app.getAllStudents();
                 }
             })
+        },
+        updateStudent(){
+            var formData = app.toFormData(app.correntStudent);
+            axios.post(url.concat("update"), formData).then(function(response){
+                
+                app.correntStudent = {};
+
+                if(response.data.error){
+                    app.errorMsg = response.data.message;
+                }else{
+                    app.successMsg = response.data.message;
+                    app.getAllStudents();
+                }
+            });
+        },
+        clearMsg(){
+            app.errorMsg = "";
+            app.successMsg = "";
         }
-        
     }
 });

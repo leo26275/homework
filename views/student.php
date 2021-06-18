@@ -67,7 +67,7 @@ a {
                                     <td class="text-center">{{student.fechanac.date}}</td>
                                     <td style="text-align: center;">
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-dark" title="Editar"  @click=""><i class="fa fa-pen"></i></i></ button>
+                                            <button class="btn btn-dark" title="Editar"  @click="showEditModal=true; selectStuden(student);  clearMsg();"><i class="fa fa-pen"></i></i></ button>
                                             &nbsp;
                                             <button v-if="student.estado==1" disabled="true" class="btn btn-danger" title="Eliminar"><i
                                                     class="fa fa-trash"></i></button> 
@@ -123,6 +123,43 @@ a {
                     </div>
                 </div>
             </div>
+
+            <!-- Edit  Book Model-->
+        <div id="overlay" v-if="showEditModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Estudiante</h5>
+                        <button type="button" class="close" @click="showEditModal=false">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form action="#" method="post">
+                            <div class="form-group">
+                              <input type="text" name="nombre" class="form-control form-control-lg" placeholder="Nombre" 
+                              aria-describedby="helpId" v-model="correntStudent.nombre">
+                            </div>
+                            <div class="form-group">
+                              <input type="text" name="direccion" class="form-control form-control-lg" placeholder="Direccion" 
+                              aria-describedby="helpId" v-model="correntStudent.direccion">
+                            </div>
+                            <div class="form-group">
+                              <input type="text" name="carrera" class="form-control form-control-lg" placeholder="Carrera" 
+                              aria-describedby="helpId" v-model="correntStudent.carrera">
+                            </div>
+                            <div class="form-group">
+                              <input type="date" name="fechanac" class="form-control form-control-lg" placeholder="Fecha de nacimiento" 
+                              aria-describedby="helpId" v-model="correntStudent.fechanac">
+                            </div>
+                        </form>
+                        <div class="form-group">
+                              <button class="btn btn-info btn-block btn-lg" @click="showEditModal=false; updateStudent();">Editar estudiante</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
             </div>
 

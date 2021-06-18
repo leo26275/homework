@@ -30,6 +30,25 @@
        
    }	
 
+   if($action == 'create'){
+    $idestudiante = $_POST['idestudiante'];
+    $idlibro = $_POST['idlibro'];
+    $fecha_prestamo = $_POST['fecha_prestamo'];
+    $fecha_dev = $_POST['fecha_dev'];
+
+    $sql ="INSERT INTO prestamo (idestudiante, idlibro, fecha_prestamo, fecha_dev, devuelto) VALUES ('$idestudiante', '$idlibro', '$fecha_prestamo', '$fecha_dev', 
+    1)";
+    
+    $stmt = sqlsrv_query( $conn, $sql );
+
+    if($stmt){
+        $resul['message'] = "Prestamo added successfully!";
+    }else{
+        $resul['error'] = true;
+        $resul['message'] = "The values are wrong!";
+    }
+}
+
    sqlsrv_close( $conn );
    echo json_encode($resul);
 ?>
