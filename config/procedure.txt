@@ -24,7 +24,7 @@ END
 GO
 
 
-ALTER PROCEDURE updateBook
+CREATE PROCEDURE updateBook
 
 @idlibro INT,
 @titulo VARCHAR(80),
