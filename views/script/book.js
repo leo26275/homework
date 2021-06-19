@@ -98,7 +98,6 @@ var app = new Vue({
         updateBook(){
             var formData = app.toFormData(app.correntBook);
             axios.post(url.concat("update"), formData).then(function(response){
-                
                 app.correntBook = {};
 
                 if(response.data.error){

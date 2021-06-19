@@ -9,28 +9,25 @@
    }
 
    if($action == 'read'){
-       $sql = "SELECT idlibro, titulo, editorial, area, '1' AS estado
-       FROM libros
-       WHERE
-           EXISTS (SELECT prestamo.idlibro FROM prestamo WHERE libros.idlibro = prestamo.idlibro) UNION ALL
-       SELECT idlibro, titulo, editorial, area, '0' AS tipo
-       FROM
-           libros
-       WHERE 
-           NOT EXISTS (SELECT prestamo.idlibro FROM prestamo WHERE libros.idlibro = prestamo.idlibro)";
+        $books = array();
+
+       $sql = "EXEC selectBook";
        
-       $books = array();
-       $stmt = sqlsrv_query( $conn, $sql );
-       if( $stmt === false) {
-           die( print_r( sqlsrv_errors (), true) );
-       }
+       $stmt = sqlsrv_prepare( $conn, $sql);
 
-       while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) {
-           array_push($books,$row);
+       if(!$stmt) {      
+        $resul['error'] = true;
+        $resul['message'] = "Error";
        }
-
-       $resul['books']=$books;
-       sqlsrv_free_stmt( $stmt);
+       
+      if(sqlsrv_execute($stmt)){
+        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) {
+            $books[]=$row;
+        }
+        $resul['books']=$books;
+        }else{  
+            $resul['books']=$books;
+        }
        
    }
 
@@ -38,14 +35,31 @@
     $titulo = $_POST['titulo'];
     $editorial = $_POST['editorial'];
     $area = $_POST['area'];
+    $myparants['titulo'] = $titulo;
+    $myparants['editorial'] = $editorial;
+    $myparants['area'] = $area; 
+    $myparants['mensaje'] = '';
 
-    $sql ="INSERT INTO libros (titulo, editorial, area) VALUES ('$titulo', '$editorial', '$area')";
+    $procedura_params = array(
+        array(&$myparants['titulo'], SQLSRV_PARAM_IN),
+        array(&$myparants['editorial'], SQLSRV_PARAM_IN),
+        array(&$myparants['area'], SQLSRV_PARAM_IN),
+        array(&$myparants['mensaje'], SQLSRV_PARAM_OUT)
+    );
+
+    $sql = "EXEC addBook @titulo = ?, @editorial = ?, @area = ?, @mensaje = ?";
     
-    $stmt = sqlsrv_query( $conn, $sql );
+    $stmt = sqlsrv_prepare( $conn, $sql, $procedura_params);
 
-    if($stmt){
-        $resul['message'] = "Libro added successfully!";
-    }else{
+    if(!$stmt){
+      
+        $resul['error'] = true;
+        $resul['message'] = "The values are wrong!";
+    }
+
+    if(sqlsrv_execute($stmt)){
+        $resul['message'] = "Successfull!";
+    }else{  
         $resul['error'] = true;
         $resul['message'] = "The values are wrong!";
     }
@@ -53,15 +67,28 @@
 
 if($action == 'delete'){
     $idlibro = $_POST['idlibro'];
+    $myparants['idlibro'] = intval($idlibro);
+    $myparants['mensaje'] = '';
 
-    $sql ="DELETE FROM libros WHERE idlibro = '$idlibro'";
-    $stmt = sqlsrv_query( $conn, $sql);
+    $procedura_params = array(
+        array(&$myparants['idlibro'], SQLSRV_PARAM_IN),
+        array(&$myparants['mensaje'], SQLSRV_PARAM_OUT)
+    );
 
-    if($stmt){
-        $resul['message'] = "The book was deleted successfully!";
-    }else{
+    $sql = "EXEC deleteBook @idlibro = ?, @mensaje = ?";
+    
+    $stmt = sqlsrv_prepare( $conn, $sql, $procedura_params);
+
+    if(!$stmt){
         $resul['error'] = true;
-        $resul['message'] = "Could not delete the book";
+        $resul['message'] = "The values are wrong!";
+    }
+
+    if(sqlsrv_execute($stmt)){
+        $resul['message'] = "Successfull delete!";
+    }else{  
+        $resul['error'] = true;
+        $resul['message'] =$myparants;
     }
 }
 
@@ -70,15 +97,34 @@ if($action == 'update'){
     $titulo = $_POST['titulo'];
     $editorial = $_POST['editorial'];
     $area = $_POST['area'];
+    $myparants['idlibro'] = intval($idlibro);
+    $myparants['titulo'] = $titulo;
+    $myparants['editorial'] = $editorial;
+    $myparants['area'] = $area; 
+    $myparants['mensaje'] = '';
 
-    $sql = "UPDATE libros SET titulo = '$titulo', editorial = '$editorial', area = '$area' WHERE idlibro = '$idlibro'";
-    $stmt = sqlsrv_query( $conn, $sql);
+    $procedura_params = array(
+        array(&$myparants['idlibro'], SQLSRV_PARAM_IN),
+        array(&$myparants['titulo'], SQLSRV_PARAM_IN),
+        array(&$myparants['editorial'], SQLSRV_PARAM_IN),
+        array(&$myparants['area'], SQLSRV_PARAM_IN),
+        array(&$myparants['mensaje'], SQLSRV_PARAM_OUT)
+    );
+
+    $sql = "EXEC updateBook @idlibro = ?, @titulo = ?, @editorial = ?, @area = ?, @mensaje = ?";
     
-    if($stmt){
-        $resul['message'] = "Book updated successfully!";
-    }else{
+    $stmt = sqlsrv_prepare( $conn, $sql, $procedura_params);
+
+    if(!$stmt){
         $resul['error'] = true;
-        $resul['message'] = "Failed to update book!";
+        $resul['message'] = "The values are wrong!";
+    }
+
+    if(sqlsrv_execute($stmt)){
+        $resul['message'] = "Successfull Update!";
+    }else{  
+        $resul['error'] = true;
+        $resul['message'] =$myparants;
     }
 }
 

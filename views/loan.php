@@ -70,8 +70,8 @@ a {
                                     <td v-else class="text-center"><span class="badge badge-info">Desactivado</span></td>
                                     <td style="text-align: center;">
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-dark" title="Editar"  @click=""><i class="fa fa-pen"></i></i></ button>
-                                            &nbsp;
+                                           <!-- <button class="btn btn-dark" title="Editar"  @click=""><i class="fa fa-pen"></i></i></ button>
+                                            &nbsp;-->
                                              <button v-if="loan.devuelto==1" class="btn btn-info" title="Activate" @click="selectLoan(loan), alertaDesabilitar()"><i
                                                     class="fa fa-check"></i></button>
 

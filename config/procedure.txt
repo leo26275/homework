@@ -1,0 +1,235 @@
+<--!Procedimientos de libros-->
+USE libros;
+
+CREATE PROCEDURE addBook
+
+@titulo VARCHAR(80),
+@editorial VARCHAR(80),
+@area VARCHAR(70),
+@mensaje VARCHAR(300) OUTPUT
+AS
+BEGIN 
+	SET NOCOUNT ON;
+	BEGIN TRAN transactionBook
+		BEGIN TRY
+			INSERT INTO libros (titulo, editorial, area) VALUES (@titulo, @editorial, @area)
+			SET @mensaje = 'El libro se inserto correctamente'
+			COMMIT TRAN transactionBook
+		END TRY
+		BEGIN CATCH
+			SET @mensaje = 'Error ' + ERROR_MESSAGE() + ' en la linea ' + CONVERT(NVARCHAR(300), ERROR_LINE()) + '.'
+			ROLLBACK TRAN transactionBook
+		END CATCH
+END 
+GO
+
+
+ALTER PROCEDURE updateBook
+
+@idlibro INT,
+@titulo VARCHAR(80),
+@editorial VARCHAR(80),
+@area VARCHAR(70),
+@mensaje VARCHAR(300) OUTPUT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRAN transactionUpdateBook
+		BEGIN TRY
+			UPDATE libros SET titulo = @titulo, editorial = @editorial, area = @area WHERE idlibro = @idlibro
+			SET @mensaje = 'El libro se modifico correctamente'
+			COMMIT TRAN transactionUpdateBook
+		END TRY
+		BEGIN CATCH
+			SET @mensaje = 'Error ' + ERROR_MESSAGE() + ' en la linea ' + CONVERT(NVARCHAR(300), ERROR_LINE()) + '.'
+			ROLLBACK TRAN transactionUpdateBook
+		END CATCH
+END 
+GO
+
+CREATE PROCEDURE deleteBook
+@idlibro INT,
+@mensaje VARCHAR(300) OUTPUT
+AS
+BEGIN 
+	SET NOCOUNT ON;
+	BEGIN TRAN transactionDeleteBook
+		BEGIN TRY
+			DELETE FROM libros WHERE idlibro = @idlibro
+			SET @mensaje = 'El libro se elimino correctamente'
+			COMMIT TRAN transactionDeleteBook
+		END TRY
+		BEGIN CATCH
+			SET @mensaje = 'Error ' + ERROR_MESSAGE() + ' en la linea ' + CONVERT(NVARCHAR(300), ERROR_LINE()) + '.'
+			ROLLBACK TRAN transactionDeleteBook
+		END CATCH
+END 
+GO
+
+<--!Fin de Procedimientos de libros-->
+
+<--! Procedimientos de estudiante-->
+
+CREATE PROCEDURE selectStudent
+AS
+BEGIN 
+	SET NOCOUNT ON;
+	SELECT idestudiante, nombre, direccion, carrera, fechanac, '1' AS estado
+        FROM estudiante
+        WHERE
+            EXISTS (SELECT prestamo.idestudiante FROM prestamo WHERE estudiante.idestudiante = prestamo.idestudiante) UNION ALL
+        SELECT idestudiante, nombre, direccion, carrera, fechanac, '0' AS tipo
+        FROM estudiante
+        WHERE 
+            NOT EXISTS (SELECT prestamo.idestudiante FROM prestamo WHERE estudiante.idestudiante = prestamo.idestudiante)
+	RETURN
+END 
+GO
+
+
+CREATE PROCEDURE addStudent
+
+@nombre VARCHAR(80),
+@direccion VARCHAR(300),
+@carrera VARCHAR(100),
+@fechanac DATE,
+@mensaje VARCHAR(300) OUTPUT
+AS
+BEGIN 
+	SET NOCOUNT ON;
+	BEGIN TRAN transactionStudent
+		BEGIN TRY
+			INSERT INTO estudiante (nombre, direccion, carrera, fechanac) VALUES (@nombre, @direccion, @carrera, @fechanac)
+			SET @mensaje = 'El estudiante se inserto correctamente'
+			COMMIT TRAN transactionStudent
+		END TRY
+		BEGIN CATCH
+			SET @mensaje = 'Error ' + ERROR_MESSAGE() + ' en la linea ' + CONVERT(NVARCHAR(300), ERROR_LINE()) + '.'
+			ROLLBACK TRAN transactionStudent
+		END CATCH
+END 
+GO
+
+
+CREATE PROCEDURE updateStudent
+@idestudiante INT,
+@nombre VARCHAR(80),
+@direccion VARCHAR(300),
+@carrera VARCHAR(100),
+@fechanac DATE,
+@mensaje VARCHAR(300) OUTPUT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRAN transactionUpdateStudent
+		BEGIN TRY
+			UPDATE estudiante SET nombre = @nombre, direccion = @direccion, carrera = @carrera, fechanac = @fechanac WHERE idestudiante = @idestudiante
+			SET @mensaje = 'El estudiante se modifico correctamente'
+			COMMIT TRAN transactionUpdateStudent
+		END TRY
+		BEGIN CATCH
+			SET @mensaje = 'Error ' + ERROR_MESSAGE() + ' en la linea ' + CONVERT(NVARCHAR(300), ERROR_LINE()) + '.'
+			ROLLBACK TRAN transactionUpdateStudent
+		END CATCH
+END 
+GO
+
+
+CREATE PROCEDURE deleteStudent
+@idestudiante INT,
+@mensaje VARCHAR(300) OUTPUT
+AS
+BEGIN 
+	SET NOCOUNT ON;
+	BEGIN TRAN transactionDeleteStudent
+		BEGIN TRY
+			DELETE FROM estudiante WHERE idestudiante = @idestudiante
+			SET @mensaje = 'El estudiante se elimino correctamente'
+			COMMIT TRAN transactionDeleteStudent
+		END TRY
+		BEGIN CATCH
+			SET @mensaje = 'Error ' + ERROR_MESSAGE() + ' en la linea ' + CONVERT(NVARCHAR(300), ERROR_LINE()) + '.'
+			ROLLBACK TRAN transactionDeleteStudent
+		END CATCH
+END 
+GO
+
+
+CREATE PROCEDURE addLoan
+
+@idestudiante INT,
+@idlibro INT,
+@fecha_prestamo VARCHAR(100),
+@fecha_dev DATE,
+@mensaje VARCHAR(300) OUTPUT
+AS
+BEGIN 
+	SET NOCOUNT ON;
+	BEGIN TRAN transactionStudent
+		BEGIN TRY
+			INSERT INTO prestamo (idestudiante, idlibro, fecha_prestamo, fecha_dev, devuelto) VALUES (@idestudiante, @idlibro, @fecha_prestamo, @fecha_dev, 
+        1)
+			SET @mensaje = 'El prestamo se inserto correctamente'
+			COMMIT TRAN transactionStudent
+		END TRY
+		BEGIN CATCH
+			SET @mensaje = 'Error ' + ERROR_MESSAGE() + ' en la linea ' + CONVERT(NVARCHAR(300), ERROR_LINE()) + '.'
+			ROLLBACK TRAN transactionStudent
+		END CATCH
+END 
+GO
+
+
+CREATE PROCEDURE selectLoan
+AS
+BEGIN 
+	SET NOCOUNT ON;
+		SELECT x.estudiante, x.titulo, x.fecha_prestamo, x.fecha_dev, x.devuelto, x.idprestamo
+		   FROM(
+		   SELECT es.nombre AS estudiante, li.titulo AS titulo, p.fecha_prestamo, p.fecha_dev, p.devuelto, p.idprestamo
+		   FROM prestamo p, (SELECT e.idestudiante, e.nombre FROM estudiante e)es,
+		   (SELECT l.idlibro, l.titulo FROM libros l)li
+		   WHERE p.idestudiante = es.idestudiante AND p.idlibro = li.idlibro)x
+	RETURN
+END 
+GO
+
+
+CREATE PROCEDURE activateLoan
+@idprestamo INT,
+@mensaje VARCHAR(300) OUTPUT
+AS
+BEGIN 
+	SET NOCOUNT ON;
+	BEGIN TRAN transactionDeleteStudent
+		BEGIN TRY
+			UPDATE prestamo SET devuelto = 1 WHERE idprestamo =@idprestamo
+			SET @mensaje = 'El prestamo se activo correctamente'
+			COMMIT TRAN transactionDeleteStudent
+		END TRY
+		BEGIN CATCH
+			SET @mensaje = 'Error ' + ERROR_MESSAGE() + ' en la linea ' + CONVERT(NVARCHAR(300), ERROR_LINE()) + '.'
+			ROLLBACK TRAN transactionDeleteStudent
+		END CATCH
+END 
+GO
+
+
+CREATE PROCEDURE disabledLoan
+@idprestamo INT,
+@mensaje VARCHAR(300) OUTPUT
+AS
+BEGIN 
+	SET NOCOUNT ON;
+	BEGIN TRAN transactionDisabledLoan
+		BEGIN TRY
+			UPDATE prestamo SET devuelto = 0 WHERE idprestamo =@idprestamo
+			SET @mensaje = 'El prestamo se deshabilito correctamente'
+			COMMIT TRAN transactionDisabledLoan
+		END TRY
+		BEGIN CATCH
+			SET @mensaje = 'Error ' + ERROR_MESSAGE() + ' en la linea ' + CONVERT(NVARCHAR(300), ERROR_LINE()) + '.'
+			ROLLBACK TRAN transactionDisabledLoan
+		END CATCH
+END 
+GO

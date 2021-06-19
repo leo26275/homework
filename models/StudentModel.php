@@ -10,26 +10,24 @@
     }
 
     if($action == 'read'){
-        $sql = "SELECT idestudiante, nombre, direccion, carrera, fechanac, '1' AS estado
-        FROM estudiante
-        WHERE
-            EXISTS (SELECT prestamo.idestudiante FROM prestamo WHERE estudiante.idestudiante = prestamo.idestudiante) UNION ALL
-        SELECT idestudiante, nombre, direccion, carrera, fechanac, '0' AS tipo
-        FROM estudiante
-        WHERE 
-            NOT EXISTS (SELECT prestamo.idestudiante FROM prestamo WHERE estudiante.idestudiante = prestamo.idestudiante)";
         $students = array();
-        $stmt = sqlsrv_query( $conn, $sql );
-        if( $stmt === false) {
-            die( print_r( sqlsrv_errors (), true) );
-        }
+        $sql = "EXEC selectStudent";
+       
+       $stmt = sqlsrv_prepare( $conn, $sql);
 
+       if(!$stmt) {      
+        $resul['error'] = true;
+        $resul['message'] = "Error";
+       }
+       
+      if(sqlsrv_execute($stmt)){
         while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) {
-            array_push($students,$row);
+            $students[]=$row;
         }
-
         $resul['students']=$students;
-        sqlsrv_free_stmt( $stmt);
+        }else{  
+            $resul['students']=$students;
+        }
         
     }
     
@@ -38,14 +36,33 @@
         $direccion = $_POST['direccion'];
         $carrera = $_POST['carrera'];
         $fechanac = $_POST['fechanac'];
+        $myparants['nombre'] = $nombre;
+        $myparants['direccion'] = $direccion;
+        $myparants['carrera'] = $carrera;
+        $myparants['fechanac'] = $fechanac; 
+        $myparants['mensaje'] = '';
     
-        $sql ="INSERT INTO estudiante (nombre, direccion, carrera, fechanac) VALUES ('$nombre', '$direccion', '$carrera', '$fechanac')";
+        $procedura_params = array(
+            array(&$myparants['nombre'], SQLSRV_PARAM_IN),
+            array(&$myparants['direccion'], SQLSRV_PARAM_IN),
+            array(&$myparants['carrera'], SQLSRV_PARAM_IN),
+            array(&$myparants['fechanac'], SQLSRV_PARAM_IN),
+            array(&$myparants['mensaje'], SQLSRV_PARAM_OUT)
+        );
+    
+        $sql = "EXEC addStudent @nombre = ?, @direccion = ?, @carrera = ?, @fechanac = ?, @mensaje = ?";
         
-        $stmt = sqlsrv_query( $conn, $sql );
+        $stmt = sqlsrv_prepare( $conn, $sql, $procedura_params);
     
-        if($stmt){
-            $resul['message'] = "Student added successfully!";
-        }else{
+        if(!$stmt){
+          
+            $resul['error'] = true;
+            $resul['message'] = "The values are wrong!";
+        }
+    
+        if(sqlsrv_execute($stmt)){
+            $resul['message'] = "Successfull Add Student!";
+        }else{  
             $resul['error'] = true;
             $resul['message'] = "The values are wrong!";
         }
@@ -53,15 +70,28 @@
 
     if($action == 'delete'){
         $idestudiante = $_POST['idestudiante'];
+        $myparants['idestudiante'] = intval($idestudiante);
+        $myparants['mensaje'] = '';
     
-        $sql ="DELETE FROM estudiante WHERE idestudiante = '$idestudiante'";
-        $stmt = sqlsrv_query( $conn, $sql);
+        $procedura_params = array(
+            array(&$myparants['idestudiante'], SQLSRV_PARAM_IN),
+            array(&$myparants['mensaje'], SQLSRV_PARAM_OUT)
+        );
     
-        if($stmt){
-            $resul['message'] = "The student was deleted successfully!";
-        }else{
+        $sql = "EXEC deleteStudent @idestudiante = ?, @mensaje = ?";
+        
+        $stmt = sqlsrv_prepare( $conn, $sql, $procedura_params);
+    
+        if(!$stmt){
             $resul['error'] = true;
-            $resul['message'] = "Could not delete the student";
+            $resul['message'] = "The values are wrong!";
+        }
+    
+        if(sqlsrv_execute($stmt)){
+            $resul['message'] = "Successfull delete!";
+        }else{  
+            $resul['error'] = true;
+            $resul['message'] =$myparants;
         }
     }
 
@@ -71,15 +101,37 @@
         $direccion = $_POST['direccion'];
         $carrera = $_POST['carrera'];
         $fechanac = $_POST['fechanac'];
+        $myparants['idestudiante'] = intval($idestudiante);
+        $myparants['nombre'] = $nombre;
+        $myparants['direccion'] = $direccion;
+        $myparants['carrera'] = $carrera;
+        $myparants['fechanac'] = $fechanac; 
+        $myparants['mensaje'] = '';
     
-        $sql = "UPDATE estudiante SET nombre = '$nombre', direccion = '$direccion', carrera = '$carrera', fechanac = '$fechanac' WHERE idestudiante = '$idestudiante'";
-        $stmt = sqlsrv_query( $conn, $sql);
+        $procedura_params = array(
+            array(&$myparants['idestudiante'], SQLSRV_PARAM_IN),
+            array(&$myparants['nombre'], SQLSRV_PARAM_IN),
+            array(&$myparants['direccion'], SQLSRV_PARAM_IN),
+            array(&$myparants['carrera'], SQLSRV_PARAM_IN),
+            array(&$myparants['fechanac'], SQLSRV_PARAM_IN),
+            array(&$myparants['mensaje'], SQLSRV_PARAM_OUT)
+        );
+    
+        $sql = "EXEC updateStudent @idestudiante = ?, @nombre = ?, @direccion = ?, @carrera = ?, @fechanac = ?, @mensaje = ?";
         
-        if($stmt){
-            $resul['message'] = "Student updated successfully!";
-        }else{
+        $stmt = sqlsrv_prepare( $conn, $sql, $procedura_params);
+    
+        if(!$stmt){
+          
             $resul['error'] = true;
-            $resul['message'] = "Failed to update student!";
+            $resul['message'] = "The values are wrong!";
+        }
+    
+        if(sqlsrv_execute($stmt)){
+            $resul['message'] = "Successfull Update!";
+        }else{  
+            $resul['error'] = true;
+            $resul['message'] =$myparants;
         }
     }
 

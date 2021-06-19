@@ -9,25 +9,24 @@
    }
 
    if($action == 'read'){
-       $sql = "SELECT x.estudiante, x.titulo, x.fecha_prestamo, x.fecha_dev, x.devuelto, x.idprestamo
-       FROM(
-       SELECT es.nombre AS estudiante, li.titulo AS titulo, p.fecha_prestamo, p.fecha_dev, p.devuelto, p.idprestamo
-       FROM prestamo p, (SELECT e.idestudiante, e.nombre FROM estudiante e)es,
-       (SELECT l.idlibro, l.titulo FROM libros l)li
-       WHERE p.idestudiante = es.idestudiante AND p.idlibro = li.idlibro)x";
        $loans = array();
-       $stmt = sqlsrv_query( $conn, $sql );
-       if( $stmt === false) {
-           die( print_r( sqlsrv_errors (), true) );
-       }
-
-       while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) {
-           array_push($loans,$row);
-       }
-
-       $resul['loans']=$loans;
-       sqlsrv_free_stmt( $stmt);
+       $sql = "EXEC selectLoan";
        
+       $stmt = sqlsrv_prepare( $conn, $sql);
+
+       if(!$stmt) {      
+        $resul['error'] = true;
+        $resul['message'] = "Error";
+       }
+       
+      if(sqlsrv_execute($stmt)){
+        while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC) ) {
+            $loans[]=$row;
+        }
+        $resul['loans']=$loans;
+        }else{  
+            $resul['loans']=$loans;
+        }
    }	
 
    if($action == 'create'){
@@ -35,43 +34,90 @@
         $idlibro = $_POST['idlibro'];
         $fecha_prestamo = $_POST['fecha_prestamo'];
         $fecha_dev = $_POST['fecha_dev'];
+        $myparants['idestudiante'] = $idestudiante;
+        $myparants['idlibro'] = $idlibro;
+        $myparants['fecha_prestamo'] = $fecha_prestamo; 
+        $myparants['fecha_dev'] = $fecha_dev; 
+        $myparants['mensaje'] = '';
 
-        $sql ="INSERT INTO prestamo (idestudiante, idlibro, fecha_prestamo, fecha_dev, devuelto) VALUES ('$idestudiante', '$idlibro', '$fecha_prestamo', '$fecha_dev', 
-        1)";
+        $procedura_params = array(
+            array(&$myparants['idestudiante'], SQLSRV_PARAM_IN),
+            array(&$myparants['idlibro'], SQLSRV_PARAM_IN),
+            array(&$myparants['fecha_prestamo'], SQLSRV_PARAM_IN),
+            array(&$myparants['fecha_dev'], SQLSRV_PARAM_IN),
+            array(&$myparants['mensaje'], SQLSRV_PARAM_OUT)
+        );
+
+        $sql = "EXEC addLoan @idestudiante = ?, @idlibro = ?, @fecha_prestamo = ?, @fecha_dev = ?, @mensaje = ?";
         
-        $stmt = sqlsrv_query( $conn, $sql );
+        $stmt = sqlsrv_prepare( $conn, $sql, $procedura_params);
 
-        if($stmt){
-            $resul['message'] = "Prestamo added successfully!";
-        }else{
+        if(!$stmt){
+        
             $resul['error'] = true;
             $resul['message'] = "The values are wrong!";
         }
+
+        if(sqlsrv_execute($stmt)){
+            $resul['message'] = "Successfull Add Loan!";
+        }else{  
+            $resul['error'] = true;
+            $resul['message'] = "The values are wrong!";
+        }
+        
     }
 
     if($action == 'activar'){
         $idprestamo = $_POST['idprestamo'];
-        $sql = "UPDATE prestamo SET devuelto = 1 WHERE idprestamo ='$idprestamo'";
-        $stmt = sqlsrv_query( $conn, $sql );
+        $myparants['idprestamo'] = intval($idprestamo);
+        $myparants['mensaje'] = '';
 
-        if($stmt){
-            $resul['message'] = "Se ha activado";
-        }else{
+        $procedura_params = array(
+            array(&$myparants['idprestamo'], SQLSRV_PARAM_IN),
+            array(&$myparants['mensaje'], SQLSRV_PARAM_OUT)
+        );
+
+        $sql = "EXEC activateLoan @idprestamo = ?, @mensaje = ?";
+        
+        $stmt = sqlsrv_prepare( $conn, $sql, $procedura_params);
+
+        if(!$stmt){
             $resul['error'] = true;
-            $resul['message'] = "No se pudo habilitar";
+            $resul['message'] = "Dened activate!";
+        }
+
+        if(sqlsrv_execute($stmt)){
+            $resul['message'] = "Successfull activate prestamo!";
+        }else{  
+            $resul['error'] = true;
+            $resul['message'] =$myparants;
         }
     }
 
     if($action == 'desactivar'){
         $idprestamo = $_POST['idprestamo'];
-        $sql = "UPDATE prestamo SET devuelto = 0 WHERE idprestamo ='$idprestamo'";
-        $stmt = sqlsrv_query( $conn, $sql );
+        $myparants['idprestamo'] = intval($idprestamo);
+        $myparants['mensaje'] = '';
 
-        if($stmt){
-            $resul['message'] = "Se ha deshabilitado";
-        }else{
+        $procedura_params = array(
+            array(&$myparants['idprestamo'], SQLSRV_PARAM_IN),
+            array(&$myparants['mensaje'], SQLSRV_PARAM_OUT)
+        );
+
+        $sql = "EXEC disabledLoan @idprestamo = ?, @mensaje = ?";
+        
+        $stmt = sqlsrv_prepare( $conn, $sql, $procedura_params);
+
+        if(!$stmt){
             $resul['error'] = true;
-            $resul['message'] = "El prestamo no se pudo deshabilitar";
+            $resul['message'] = "Dened disabled!";
+        }
+
+        if(sqlsrv_execute($stmt)){
+            $resul['message'] = "Successfull disabled prestamo!";
+        }else{  
+            $resul['error'] = true;
+            $resul['message'] =$myparants;
         }
     }
 
